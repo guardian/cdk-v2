@@ -1,4 +1,4 @@
-import { App, Stack, StackProps } from 'aws-cdk-lib';
+import { App, LegacyStackSynthesizer, Stack, StackProps, Tags } from 'aws-cdk-lib';
 
 export interface GuStackProps extends Omit<StackProps, 'stackName'> {
   stack: string;
@@ -40,9 +40,21 @@ export class GuStack extends Stack implements StackStageIdentity {
     super(app, id, {
       ...props,
       stackName: cloudFormationStackName,
+      synthesizer: new LegacyStackSynthesizer(),
     });
 
     this._stack = props.stack;
-    this._stage = props.stage;
+    this._stage = props.stage.toUpperCase();
+
+    if (!props.withoutTags) {
+      this.addTag('gu:cdk:version', 'TEST');
+      this.addTag('gu:repo', 'guardian/cdk');
+      this.addTag('Stack', this.stack);
+      this.addTag('Stage', this.stage);
+    }
+  }
+
+  protected addTag(key: string, value: string, applyToLaunchedInstances: boolean = true): void {
+    Tags.of(this).add(key, value, { applyToLaunchedInstances });
   }
 }

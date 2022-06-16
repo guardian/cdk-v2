@@ -1,6 +1,7 @@
-import { CfnParameter, Duration } from 'aws-cdk-lib';
+import { CfnParameter, Duration, Tags } from 'aws-cdk-lib';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
+import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Code, Function, FunctionProps, Runtime, RuntimeFamily } from 'aws-cdk-lib/aws-lambda';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { GuStack } from './core';
@@ -42,7 +43,7 @@ export class GuScheduledLambda extends Function {
       APP: app,
     };
 
-    const defaultProps = {
+    const defaultProps: Partial<GuScheduledLambdaProps> = {
       memorySize: defaultMemorySize(runtime, memorySize),
       timeout: Duration.seconds(30),
       environment: {
@@ -54,8 +55,9 @@ export class GuScheduledLambda extends Function {
     const bucket = Bucket.fromBucketName(
       scope,
       `${id}-bucket`,
-      new CfnParameter(scope, 'dist-bucket-param', {
-        type: 'String',
+      new CfnParameter(scope, 'DistributionBucketName', {
+        type: 'AWS::SSM::Parameter::Value<String>',
+        description: 'SSM parameter containing the S3 bucket name holding distribution artifacts',
         default: '/account/services/artifact.bucket',
       }).valueAsString,
     );
@@ -69,6 +71,20 @@ export class GuScheduledLambda extends Function {
       ...defaultProps,
       ...props,
     });
+
+    Tags.of(this).add('App', props.app);
+
+    bucket.grantRead(this);
+
+    this.addToRolePolicy(new PolicyStatement({
+      actions: ['ssm:GetParametersByPath'],
+      resources: [`arn:aws:ssm:${scope.region}:${scope.account}:parameter/${scope.stage}/${scope.stack}/${props.app}`],
+    }));
+
+    this.addToRolePolicy(new PolicyStatement({
+      actions: ['ssm:GetParameters', 'ssm:GetParameter'],
+      resources: [`arn:aws:ssm:${scope.region}:${scope.account}:parameter/${scope.stage}/${scope.stack}/${props.app}/*`],
+    }));
 
     props.rules.forEach((rule, index) => {
       const target = new LambdaFunction(this);
