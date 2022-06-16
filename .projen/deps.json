@@ -25,6 +25,10 @@
       "type": "build"
     },
     {
+      "name": "awslint",
+      "type": "build"
+    },
+    {
       "name": "constructs",
       "version": "10.0.5",
       "type": "build"
