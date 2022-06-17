@@ -5,7 +5,6 @@
     "url": "https://github.com/guardian/cdk-v2.git"
   },
   "scripts": {
-    "awslint": "npx projen awslint",
     "build": "npx projen build",
     "bump": "npx projen bump",
     "clobber": "npx projen clobber",
@@ -41,7 +40,6 @@
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
     "aws-cdk-lib": "2.1.0",
-    "awslint": "^2.28.1",
     "constructs": "10.0.5",
     "eslint": "^8",
     "eslint-import-resolver-node": "^0.3.6",

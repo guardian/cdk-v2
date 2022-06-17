@@ -1,13 +1,5 @@
 {
   "tasks": {
-    "awslint": {
-      "name": "awslint",
-      "steps": [
-        {
-          "exec": "awslint"
-        }
-      ]
-    },
     "build": {
       "name": "build",
       "description": "Full release build",

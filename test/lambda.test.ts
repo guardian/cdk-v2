@@ -8,7 +8,7 @@ import { GuScheduledLambda, NoMonitoring } from '../src/lambda';
 describe('GuScheduledLambda', () => {
   it('should match the snapshot', () =>{
     const stack = simpleGuStackForTesting();
-    const noMonitoring: NoMonitoring = { noMonitoring: true };
+    const noMonitoring: NoMonitoring = { disabled: true };
     const props = {
       fileName: 'lambda.zip',
       functionName: 'my-lambda-function',

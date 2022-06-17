@@ -2,35 +2,39 @@ import { CfnParameter, Duration, Tags } from 'aws-cdk-lib';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { Code, Function, FunctionProps, Runtime, RuntimeFamily } from 'aws-cdk-lib/aws-lambda';
+import { Code, Function, FunctionOptions, Runtime, RuntimeFamily } from 'aws-cdk-lib/aws-lambda';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { GuStack } from './core';
 
 export interface NoMonitoring {
-  noMonitoring: true;
+  readonly disabled: true;
 }
 
-interface GuLambdaErrorPercentageMonitoringProps {
-  tolerated5xxPercentage: number;
-  numberOfMinutesAboveThresholdBeforeAlarm?: number;
+export interface GuLambdaErrorPercentageMonitoringProps {
+  readonly tolerated5xxPercentage: number;
+  readonly numberOfMinutesAboveThresholdBeforeAlarm?: number;
 }
 
 interface AppIdentity {
-  app: string;
+  readonly app: string;
 }
 
 // TODO this feels messy! Should default based on stack/stage/app OR pass in
 // full value. Not half and half.
 interface Artifact {
-  fileName: string;
+  readonly fileName: string;
 }
 
-interface GuScheduledLambdaProps extends Omit<FunctionProps, 'code'>, AppIdentity, Artifact {
-  rules: Array<{
-    schedule: Schedule;
-    description?: string;
-  }>;
-  monitoringConfiguration: NoMonitoring | GuLambdaErrorPercentageMonitoringProps;
+export interface ScheduleRule {
+  readonly schedule: Schedule;
+  readonly description?: string;
+}
+
+export interface GuScheduledLambdaProps extends FunctionOptions, AppIdentity, Artifact {
+  readonly runtime: Runtime;
+  readonly handler: string;
+  readonly rules: Array<ScheduleRule>;
+  readonly monitoringConfiguration: NoMonitoring | GuLambdaErrorPercentageMonitoringProps;
 }
 
 export class GuScheduledLambda extends Function {
@@ -66,10 +70,10 @@ export class GuScheduledLambda extends Function {
     const code = Code.fromBucket(bucket, objectKey);
 
     super(scope, id, {
-      code,
-
       ...defaultProps,
       ...props,
+
+      code,
     });
 
     Tags.of(this).add('App', props.app);
