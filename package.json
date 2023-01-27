@@ -1,0 +1,45 @@
+{
+  "name": "cdk-v2",
+  "version": "0.1.0",
+  "description": "CDK V2 prototype",
+  "author": {
+    "name": "Nicolas Long",
+    "email": "nicolas.long@theguardian.com"
+  },
+  "repository": {
+    "url": "https://github.com/guardian/cdk-v2.git"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "jsii",
+    "build:watch": "jsii --watch",
+    "package": "jsii-pacmak",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "ISC",
+  "stability": "experimental",
+  "types": "index.d.ts",
+  "jsii": {
+    "outdir": "dist",
+    "versionFormat": "full",
+    "targets": {
+      "go": {
+        "moduleName": "github.com/guardian/cdk-v2"
+      },
+      "java": {
+        "package": "com.gu.cdkv2",
+        "maven": {
+          "groupId": "com.gu",
+          "artifactId": "cdkv2"
+        }
+      }
+    }
+  },
+  "devDependencies": {
+    "@guardian/prettier": "^2.1.5",
+    "jsii": "^1.73.0",
+    "jsii-pacmak": "^1.73.0",
+    "prettier": "2.8.3"
+  },
+  "prettier": "@guardian/prettier"
+}
