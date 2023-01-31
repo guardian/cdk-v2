@@ -9,7 +9,7 @@
   "repository": {
     "url": "https://github.com/guardian/cdk-v2.git"
   },
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "build": "jsii",
     "build:watch": "jsii --watch",
@@ -41,5 +41,9 @@
     "jsii-pacmak": "^1.73.0",
     "prettier": "2.8.3"
   },
-  "prettier": "@guardian/prettier"
+  "prettier": "@guardian/prettier",
+  "dependencies": {
+    "aws-cdk-lib": "^2.62.1",
+    "constructs": "^10.1.232"
+  }
 }
